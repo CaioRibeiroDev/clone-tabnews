@@ -9,12 +9,27 @@ async function query(queryObject) {
     database: process.env.POSTGRES_DB
   });
   await client.connect();
-  const result = await client.query(queryObject);
-  await client.end();
 
-  return result;
+  try {
+    const result = await client.query(queryObject);
+    return result;
+  } catch (error) {
+    console.error(error)
+  } finally {
+    await client.end();
+  }
+
+  
 }
 
 export default {
-  query: query
+  query: query,
+  getUsedConnections: async () => {
+    const databaseName = 'local_db'
+    const result = await query({
+      text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
+      values: [databaseName]
+    });
+    return result.rows[0].count
+  }
 }
