@@ -1,4 +1,7 @@
 import { Client } from 'pg'
+import dns from 'dns'
+
+dns.setDefaultResultOrder('ipv4first');
 
 async function query(queryObject) {
   const client = new Client({
@@ -6,7 +9,11 @@ async function query(queryObject) {
     port: process.env.POSTGRES_PORT,
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB
+    database: process.env.POSTGRES_DB,
+     ssl: {
+      require: process.env.NODE_ENV === 'development' ? false : true,
+      rejectUnauthorized: false, // aceita o certificado mesmo sem a CA completa
+    },
   });
   
   try {
