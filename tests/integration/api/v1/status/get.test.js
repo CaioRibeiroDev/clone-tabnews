@@ -11,5 +11,4 @@ test("GET to /api/v1/status should return 200", async () => {
   expect(responseBody.dependencies.database.postgres_version).toBeDefined()
   expect(typeof responseBody.dependencies.database.max_connections).toBe('number')
   expect(typeof responseBody.dependencies.database.used_connections).toBe('number')
-  console.log(responseBody)
   })
