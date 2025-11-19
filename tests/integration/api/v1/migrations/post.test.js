@@ -1,12 +1,13 @@
 import database from 'infra/database'
 import path from 'path'
 import fs from 'fs'
+import orchestrator from 'tests/orchestrator.js'
 
-beforeAll(resetDatabase)
 
-async function resetDatabase() {
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
   await database.query("DROP SCHEMA PUBLIC CASCADE; CREATE SCHEMA PUBLIC;")
-}
+})
 
 test("POST to /api/v1/migrations should return 200", async () => {
   const folderPath = path.join(process.cwd(), 'infra/migrations');
