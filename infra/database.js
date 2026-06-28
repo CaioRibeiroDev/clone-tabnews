@@ -15,7 +15,9 @@ async function query(queryObject) {
     console.error(error);
     throw error;
   } finally {
-    await client.end();
+    if (client) {
+      await client.end();
+    }
   }
 }
 
@@ -43,15 +45,20 @@ function getSSLValues() {
   return process.env.NODE_ENV === "production" ? true : false;
 }
 
-export default {
+const database = {
   query,
   getNewClient,
-  getUsedConnections: async () => {
-    const databaseName = "local_db";
-    const result = await query({
-      text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
-      values: [databaseName],
-    });
-    return result.rows[0].count;
-  },
+  getUsedConnections,
 };
+
+export default database;
+
+async function getUsedConnections() {
+  const databaseName = "local_db";
+
+  const result = await query({
+    text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
+    values: [databaseName],
+  });
+  return result.rows[0].count;
+}

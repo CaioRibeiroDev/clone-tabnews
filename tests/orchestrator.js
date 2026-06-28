@@ -4,17 +4,31 @@ async function waitForAllServices() {
   await awaitForWebServer();
 
   async function awaitForWebServer() {
-    return retry(fetchStatusPage, {
+    const result = await retry(fetchStatusPage, {
       retries: 100,
     });
 
-    async function fetchStatusPage() {
+    return result;
+  }
+
+  async function fetchStatusPage() {
+    try {
       const response = await fetch("http://localhost:3000/api/v1/status");
-      const responseBody = await response.json();
+
+      console.log("Status: ", response.status);
+
+      if (response.status !== 200) {
+        throw new Error(`Status invalido: ${response.status}`);
+      }
+    } catch (error) {
+      console.log("Error fetching status page: ", error.message);
+      throw error;
     }
   }
 }
 
-export default {
+const orchestrator = {
   waitForAllServices,
 };
+
+export default orchestrator;
