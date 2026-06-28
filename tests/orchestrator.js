@@ -15,9 +15,9 @@ async function waitForAllServices() {
     try {
       const response = await fetch("http://localhost:3000/api/v1/status");
 
-      console.log("Status: ", response.status)
+      console.log("Status: ", response.status);
 
-      if(response.status !== 200) {
+      if (response.status !== 200) {
         throw new Error(`Status invalido: ${response.status}`);
       }
     } catch (error) {

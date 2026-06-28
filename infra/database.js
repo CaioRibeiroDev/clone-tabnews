@@ -48,12 +48,12 @@ function getSSLValues() {
 const database = {
   query,
   getNewClient,
-  getUsedConnections
+  getUsedConnections,
 };
 
 export default database;
 
-async function getUsedConnections()  {
+async function getUsedConnections() {
   const databaseName = "local_db";
 
   const result = await query({
@@ -61,4 +61,4 @@ async function getUsedConnections()  {
     values: [databaseName],
   });
   return result.rows[0].count;
-};
+}
