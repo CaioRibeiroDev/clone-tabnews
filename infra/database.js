@@ -15,7 +15,9 @@ async function query(queryObject) {
     console.error(error);
     throw error;
   } finally {
-    await client.end();
+    if (client) {
+      await client.end();
+    }
   }
 }
 
@@ -46,12 +48,14 @@ function getSSLValues() {
 const database = {
   query,
   getNewClient,
+  getUsedConnections
 };
 
 export default database;
 
-async () => {
+async function getUsedConnections()  {
   const databaseName = "local_db";
+
   const result = await query({
     text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
     values: [databaseName],
