@@ -43,15 +43,18 @@ function getSSLValues() {
   return process.env.NODE_ENV === "production" ? true : false;
 }
 
-export default {
+const database = {
   query,
   getNewClient,
-  getUsedConnections: async () => {
-    const databaseName = "local_db";
-    const result = await query({
-      text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
-      values: [databaseName],
-    });
-    return result.rows[0].count;
-  },
+};
+
+export default database;
+
+async () => {
+  const databaseName = "local_db";
+  const result = await query({
+    text: "SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;",
+    values: [databaseName],
+  });
+  return result.rows[0].count;
 };
